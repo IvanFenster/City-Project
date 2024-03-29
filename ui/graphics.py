@@ -20,7 +20,7 @@ def load_image(path, size=(1, 1)):
 # клиенты будут передавать координаты лабиринта
 def draw_image(image, x, y):
     """Здесь нужен pygame blit с пересчетом на settings.tile_size"""
-    screen.blit(image, (x*settings.tile_size[0] + settings.view_left_top[0], y*settings.tile_size[1] + settings.view_left_top[1]))
+    screen.blit(image, (x, y))
     pass
 
 

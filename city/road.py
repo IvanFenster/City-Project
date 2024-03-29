@@ -3,5 +3,5 @@ class Road:
         self.a = a
         self.b = b
         self.type = type
-        self.image = pass
+
 
