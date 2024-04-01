@@ -1,13 +1,17 @@
 from ui import graphics
 class Storage:
     def __init__(self):
-        self.road_vert = graphics.load_image('images/road_vert.png')
-        self.road_horiz = graphics.load_image('images/road_horiz.png')
-        self.intersection = graphics.load_image('images/intersection.png')
-        self.edge_top = graphics.load_image('images/edge_top.png')
-        self.edge_down = graphics.load_image('images/edge_down.png')
-        self.edge_right = graphics.load_image('images/edge_right.png')
-        self.edge_left = graphics.load_image('images/edge_left.png')
+        self.im_dict = {}
+        self.im_dict["road_vert"] = self.road_vert = graphics.load_image('images/road_vert.png')
+        self.im_dict["road_horiz"] = self.road_horiz = graphics.load_image('images/road_horiz.png')
+        self.im_dict["intersection"] = self.intersection = graphics.load_image('images/intersection.png')
+        self.im_dict["edge_top"] = self.edge_top = graphics.load_image('images/edge_top.png')
+        self.im_dict["edge_down"] = self.edge_down = graphics.load_image('images/edge_down.png')
+        self.im_dict["edge_right"] = self.edge_right = graphics.load_image('images/edge_right.png')
+        self.im_dict["edge_left"] = self.edge_left = graphics.load_image('images/edge_left.png')
+        self.im_dict['block1'] = self.edge_left = graphics.load_image('images/block.png')
 
+    def get_image(self, type):
+        return self.im_dict[type]
 
 storage = Storage()
