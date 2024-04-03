@@ -34,6 +34,7 @@ for i in range(settings.tiles_num[0]):
             n_list.append(Road(i, j, type_in))
     road_list.append(n_list)
 
+
 block_list = []
 for i in range(settings.tiles_num[0]):
     n_list = []
@@ -57,8 +58,57 @@ for i in range(4, 66):
     elif row % 2 == 1:
         col = (((i-12) % 18) // 2) * 2
 
+    if col % 2 == 1:
+        if row != 6:
+            if i % 2 == 0:
+                graph[i].append(i + 10)
+            else:
+                graph[i].append(i + 7)
+        if row != 0:
+            if i % 2 == 0:
+                graph[i].append(i - 7)
+            else:
+                graph[i].append(i - 10)
+        if col != 1 and i % 2 == 1:
+            graph[i].append(i - 2)
+        if col != 7 and i % 2 == 0:
+            graph[i].append(i + 2)
+
+    elif col % 2 == 0:
+        if row != 5 and i % 2 == 0:
+            graph[i].append(i + 18)
+        if row != 1 and i % 2 == 1:
+            graph[i].append(i - 18)
+        if col != 0:
+            if i % 2 == 0:
+                graph[i].append(i + 9)
+            else:
+                graph[i].append(i - 10)
+        if col != 8:
+            if i % 2 == 1:
+                graph[i].append(i - 9)
+            else:
+                graph[i].append(i + 10)
+
+graph[0] = [4, 12]
+graph[2] = [11, 20]
+graph[67] = [49, 58]
+graph[69] = [57, 65]
+
+graph[5].append(1)
+graph[13].append(1)
+graph[10].append(3)
+graph[21].append(21)
+graph[56].append(68)
+graph[64].append(68)
+graph[59].append(66)
+graph[48].append(66)
 
 
+for i in range(len(graph)):
+    print(i, ":", graph[i])
+
+print(graph)
 
 
 def update(delta_time):
