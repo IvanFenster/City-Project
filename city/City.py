@@ -52,7 +52,7 @@ def define_row(vert):
     if k <= 9:
         return 2 * t
     else:
-        return 2 * t
+        return 2 * t + 1
 
 def define_col(vert):
     k = vert % 18
@@ -67,7 +67,7 @@ def define_col(vert):
 graph = [[] for _ in range(82)]
 useful_vert = [i for i in range(10, 72)]
 useful_vert += [1, 9, 72, 80]
-print(useful_vert)
+
 row = -1
 col = 0
 for i in range(10, 72):
@@ -121,8 +121,9 @@ graph[65].append(72)
 graph[54].append(72)
 
 
+"""
 for i in range(len(graph)):
-    print(i, ":", graph[i])
+    print(i, ":", graph[i])"""
 
 
 
@@ -163,6 +164,7 @@ car = Vehicle()
 
 def update(delta_time):
     car.update()
+    pass
 
 def draw():
     for i in road_list:
@@ -172,4 +174,9 @@ def draw():
         for j in i:
             j.draw()
 
+
     car.draw()
+    """
+    graphics.draw_image(graphics.rotatet_image(storage.im_dict['car'], 0), 110, 24)
+    graphics.draw_image(graphics.rotatet_image(storage.im_dict['car'], -90), 203, 24)
+    graphics.draw_image(graphics.rotatet_image(storage.im_dict['car'], -90), 203, 110)"""
