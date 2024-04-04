@@ -4,7 +4,8 @@ from storage import Storage
 from ui import graphics
 from city.tiles import Road
 from city.tiles import Block
-from random import randint
+import random
+from city.vehicle import Vehicle
 
 # Создание лабиринта
 road_list = []
@@ -39,32 +40,47 @@ block_list = []
 for i in range(settings.tiles_num[0]):
     n_list = []
     for j in range(settings.tiles_num[1]):
-        rand_num = randint(0, 3)
+        rand_num = random.randint(0, 3)
         type_in = 'block' + str(rand_num)
         n_list.append(Block(i, j, type_in))
     block_list.append(n_list)
 
 
+def define_row(vert):
+    k = vert % 18
+    t = vert // 18
+    if k <= 9:
+        return 2 * t
+    else:
+        return 2 * t
+
+def define_col(vert):
+    k = vert % 18
+    if k <= 9:
+        t = k // 2
+        return t * 2
+    else:
+        return ((k // 2) - 5) * 2 + 1
+
 
 # Создание графа
-graph = [[] for _ in range(70)]
+graph = [[] for _ in range(82)]
+useful_vert = [i for i in range(10, 72)]
+useful_vert += [1, 9, 72, 80]
+print(useful_vert)
 row = -1
 col = 0
-for i in range(4, 66):
-    if (row % 2 == 0 and (i-12) % 18 == 0) or (row % 2 == 1 and (i-4) % 18 == 0):
-        row += 1
-    if row % 2 == 0:
-        col = (((i-4) % 18) // 2) * 2 + 1
-    elif row % 2 == 1:
-        col = (((i-12) % 18) // 2) * 2
+for i in range(10, 72):
+    row = define_row(i)
+    col = define_col(i)
 
     if col % 2 == 1:
-        if row != 6:
+        if row != 7:
             if i % 2 == 0:
                 graph[i].append(i + 10)
             else:
                 graph[i].append(i + 7)
-        if row != 0:
+        if row != 1:
             if i % 2 == 0:
                 graph[i].append(i - 7)
             else:
@@ -75,9 +91,9 @@ for i in range(4, 66):
             graph[i].append(i + 2)
 
     elif col % 2 == 0:
-        if row != 5 and i % 2 == 0:
+        if row != 6 and i % 2 == 0:
             graph[i].append(i + 18)
-        if row != 1 and i % 2 == 1:
+        if row != 2 and i % 2 == 1:
             graph[i].append(i - 18)
         if col != 0:
             if i % 2 == 0:
@@ -90,29 +106,63 @@ for i in range(4, 66):
             else:
                 graph[i].append(i + 10)
 
-graph[0] = [4, 12]
-graph[2] = [11, 20]
-graph[67] = [49, 58]
-graph[69] = [57, 65]
+graph[0] = [10, 18]
+graph[8] = [17, 26]
+graph[73] = [55, 64]
+graph[81] = [63, 71]
 
-graph[5].append(1)
-graph[13].append(1)
-graph[10].append(3)
-graph[21].append(21)
-graph[56].append(68)
-graph[64].append(68)
-graph[59].append(66)
-graph[48].append(66)
+graph[11].append(1)
+graph[19].append(1)
+graph[16].append(9)
+graph[27].append(9)
+graph[62].append(80)
+graph[70].append(80)
+graph[65].append(72)
+graph[54].append(72)
 
 
 for i in range(len(graph)):
     print(i, ":", graph[i])
 
-print(graph)
+
+
+def new_path(now):
+    queue = []
+    color = [0 for _ in range(82)]
+    dist = [0 for _ in range(82)]
+    prev = [-2 for _ in range(82)]
+    cur_vert = now
+    goal = random.choice(useful_vert)
+    queue.append(cur_vert)
+    color[cur_vert] = 1
+
+    while len(queue) > 0:
+        v = queue[0]
+        queue.pop(0)
+        for u in graph[v]:
+            if color[u] == 0:
+                color[u] = 1
+                dist[u] = dist[v] + 1
+                prev[u] = v
+                queue.append(u)
+
+    dist_to_goal = dist[goal]
+    pr = prev[goal]
+    path = []
+    while pr != now:
+        path.append(pr)
+        pr = prev[pr]
+    path.reverse()
+    path.append(goal)
+    return goal, path
+
+
+car = Vehicle()
+
 
 
 def update(delta_time):
-    pass
+    car.update()
 
 def draw():
     for i in road_list:
@@ -121,3 +171,5 @@ def draw():
     for i in block_list:
         for j in i:
             j.draw()
+
+    car.draw()
