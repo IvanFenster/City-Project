@@ -1,3 +1,4 @@
+import settings
 from city import City
 import random
 from ui import graphics
@@ -6,6 +7,7 @@ from storage import storage
 
 class Vehicle:
     def __init__(self, start):
+
         self.vertex = start
         self.start = start
         #self.vertex = random.choice([0, 8, 73, 81])
@@ -32,7 +34,7 @@ class Vehicle:
         self.navigator = []
         self.isturned = False
 
-        self.speed = 1
+        self.speed = settings.speed
         self.move = self.use_degree(self.degree)
 
         self.step()
@@ -40,9 +42,13 @@ class Vehicle:
 
     def step(self):
         if len(self.path) == 0:
+            if self.goal in City.end_vert:
+                City.cars.remove(self)
+                City.cur_car_num -= 1
+                return
             self.goal, self.path = City.new_path(self.vertex)
 
-        print(self.start, 'x:', self.x, 'y:', self.y)
+        #print(self.start, 'x:', self.x, 'y:', self.y)
         self.destin = self.path[0]
         row = City.define_row(self.vertex)
         diff = self.destin - self.vertex

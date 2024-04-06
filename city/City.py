@@ -65,8 +65,10 @@ def define_col(vert):
 
 # Создание графа
 graph = [[] for _ in range(82)]
-useful_vert = [i for i in range(10, 72)]
-useful_vert += [1, 9, 72, 80]
+usable_vert = [i for i in range(10, 72)]
+usable_vert += [1, 9, 72, 80]
+
+
 
 row = -1
 col = 0
@@ -121,10 +123,10 @@ graph[65].append(72)
 graph[54].append(72)
 
 
-
+"""
 for i in range(len(graph)):
     print(i, ":", graph[i])
-
+"""
 
 
 def new_path(now):
@@ -133,7 +135,7 @@ def new_path(now):
     dist = [0 for _ in range(82)]
     prev = [-2 for _ in range(82)]
     cur_vert = now
-    goal = random.choice(useful_vert)
+    goal = random.choice(usable_vert)
     queue.append(cur_vert)
     color[cur_vert] = 1
 
@@ -158,16 +160,57 @@ def new_path(now):
     return goal, path
 
 cars = []
-cars.append(Vehicle(0))
+"""cars.append(Vehicle(0))
 cars.append(Vehicle(8))
 cars.append(Vehicle(73))
-cars.append(Vehicle(81))
+cars.append(Vehicle(81))"""
+
+start_vert = [0, 8, 73, 81]
+end_vert = [1, 9, 72, 80]
+
+cur_car_num = 0
+time = 0
+
+
+def spawn_cars():
+    global cur_car_num
+
+
+    gates_spawn = [0, 0, 0, 0]
+
+    if cur_car_num < settings.car_num:
+        print('spawn_cars', time//200)
+
+        dif = settings.car_num - cur_car_num
+        spanw_now = min(dif, 4)
+        cur_car_num += spanw_now
+        opt = [0, 1, 2, 3]
+        for i in range(spanw_now):
+            gate = random.choice(opt)
+            opt.remove(gate)
+            gates_spawn[gate] = 1
+
+        for i in range(4):
+            if gates_spawn[i] == 1:
+
+                cars.append(Vehicle(start_vert[i]))
+
 
 
 def update(delta_time):
+    global time
+
+    time += 1
+
+    if time % 200 == 1:
+        spawn_cars()
+
     if settings.debug == False:
         for i in cars:
             i.update()
+
+
+
 
 
 def draw():
