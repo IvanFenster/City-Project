@@ -5,16 +5,33 @@ from storage import storage
 
 
 class Vehicle:
-    def __init__(self):
-        #self.vertex = random.choice([0, 2, 67, 69])
-        self.vertex = 0
+    def __init__(self, start):
+        self.vertex = start
+        self.start = start
+        #self.vertex = random.choice([0, 8, 73, 81])
+        if self.vertex == 0:
+            self.x = 3
+            self.y = -100 + 10
+            self.degree = -90
+        elif self.vertex == 8:
+            self.x = 803
+            self.y = -100 + 10
+            self.degree = -90
+        elif self.vertex == 73:
+            self.x = 24
+            self.y = 717
+            self.degree = 90
+        elif self.vertex == 81:
+            self.x = 824
+            self.y = 717
+            self.degree = 90
         self.goal, self.path = City.new_path(self.vertex)
+        #self.goal, self.path = 70, [64, 66, 68, 70]
         self.path_index = 0
-        self.x = 3
-        self.y = -100 + 10
+
         self.navigator = []
         self.isturned = False
-        self.degree = -90
+
         self.speed = 1
         self.move = self.use_degree(self.degree)
 
@@ -22,28 +39,27 @@ class Vehicle:
 
 
     def step(self):
-        print('x:', self.x, 'y:', self.y)
         if len(self.path) == 0:
             self.goal, self.path = City.new_path(self.vertex)
 
+        print(self.start, 'x:', self.x, 'y:', self.y)
         self.destin = self.path[0]
         row = City.define_row(self.vertex)
         diff = self.destin - self.vertex
         if row % 2 == 1:
             if abs(diff) == 2:
-                self.navigator = [[0, 50*4]]
+                self.navigator = [[0, 50 * 4]]
             elif abs(diff) == 10:
                 self.navigator = [[0, 93], [-90, 86]]
             elif abs(diff) == 7:
                 self.navigator = [[0, 114], [90, 107]]
         if row % 2 == 0:
             if abs(diff) == 18:
-                self.navigator = [[0, 50*4]]
+                self.navigator = [[0, 50 * 4]]
             elif abs(diff) == 9:
                 self.navigator = [[0, 93], [-90, 86]]
             elif abs(diff) == 10:
                 self.navigator = [[0, 114], [90, 107]]
-
 
     def use_degree(self, degree):
         t = degree % 360

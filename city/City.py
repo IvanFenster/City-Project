@@ -121,9 +121,9 @@ graph[65].append(72)
 graph[54].append(72)
 
 
-"""
+
 for i in range(len(graph)):
-    print(i, ":", graph[i])"""
+    print(i, ":", graph[i])
 
 
 
@@ -157,14 +157,18 @@ def new_path(now):
     path.append(goal)
     return goal, path
 
-
-car = Vehicle()
-
+cars = []
+cars.append(Vehicle(0))
+cars.append(Vehicle(8))
+cars.append(Vehicle(73))
+cars.append(Vehicle(81))
 
 
 def update(delta_time):
-    car.update()
-    pass
+    if settings.debug == False:
+        for i in cars:
+            i.update()
+
 
 def draw():
     for i in road_list:
@@ -174,9 +178,11 @@ def draw():
         for j in i:
             j.draw()
 
+    for i in cars:
+        i.draw()
 
-    car.draw()
-    """
-    graphics.draw_image(graphics.rotatet_image(storage.im_dict['car'], 0), 110, 24)
-    graphics.draw_image(graphics.rotatet_image(storage.im_dict['car'], -90), 203, 24)
-    graphics.draw_image(graphics.rotatet_image(storage.im_dict['car'], -90), 203, 110)"""
+    if settings.debug:
+        graphics.draw_image(graphics.rotatet_image(storage.im_dict['car'], 90), 24, 510)
+        graphics.draw_image(graphics.rotatet_image(storage.im_dict['car'], 0), 24, 424)
+        graphics.draw_image(graphics.rotatet_image(storage.im_dict['car'], -90), 203, 110)
+        graphics.draw_image(graphics.rotatet_image(storage.im_dict['car'], 180), 203, 203)
