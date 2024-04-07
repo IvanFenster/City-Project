@@ -9,3 +9,5 @@ debug = False
 car_num = 30
 speed = 1
 turn_length = 4
+
+last_car_option = 7

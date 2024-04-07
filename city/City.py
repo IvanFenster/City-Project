@@ -122,6 +122,7 @@ graph[70].append(80)
 graph[65].append(72)
 graph[54].append(72)
 
+
 """
 for i in range(len(graph)):
     print(i, ":", graph[i])
@@ -135,6 +136,8 @@ def new_path(now):
     prev = [-2 for _ in range(82)]
     cur_vert = now
     goal = random.choice(usable_vert)
+    if goal == now:
+        return new_path(now)
     queue.append(cur_vert)
     color[cur_vert] = 1
 
@@ -156,12 +159,7 @@ def new_path(now):
         pr = prev[pr]
     path.reverse()
     path.append(goal)
-    """for i in path:
-        if i < 0:
-            print('!!ALERT!! NUM: 2')
-            print('path:', path)
-            print('goal:', goal)
-            print('prev:', prev)"""
+
     return goal, path
 
 cars = []
@@ -198,7 +196,7 @@ def spawn_cars():
         for i in range(4):
             if gates_spawn[i] == 1:
 
-                cars.append(Vehicle(start_vert[i], random.randint(0, 3)))
+                cars.append(Vehicle(start_vert[i], random.randint(0, settings.last_car_option)))
 
 
 

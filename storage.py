@@ -1,3 +1,4 @@
+import settings
 from ui import graphics
 class Storage:
     def __init__(self):
@@ -15,10 +16,11 @@ class Storage:
         self.im_dict['block2'] = graphics.load_image('images/block2.png', (3, 3))
         self.im_dict['block3'] = graphics.load_image('images/block3.png', (3, 3))
 
-        self.im_dict['car0'] = graphics.load_image('images/car0.png')
-        self.im_dict['car1'] = graphics.load_image('images/car1.png')
-        self.im_dict['car2'] = graphics.load_image('images/car2.png')
-        self.im_dict['car3'] = graphics.load_image('images/car3.png')
+
+        for i in range(settings.last_car_option+1):
+            self.im_dict[f'car{i}'] = graphics.load_image(f'images/car{i}.png')
+
+        print(self.im_dict)
 
     def get_image(self, type):
         return self.im_dict[type]
