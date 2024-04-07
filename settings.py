@@ -6,5 +6,6 @@ block_num = [4, 3]
 
 debug = False
 
-car_num = 20
+car_num = 30
 speed = 1
+turn_length = 4

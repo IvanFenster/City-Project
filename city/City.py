@@ -122,7 +122,6 @@ graph[70].append(80)
 graph[65].append(72)
 graph[54].append(72)
 
-
 """
 for i in range(len(graph)):
     print(i, ":", graph[i])
@@ -157,6 +156,12 @@ def new_path(now):
         pr = prev[pr]
     path.reverse()
     path.append(goal)
+    """for i in path:
+        if i < 0:
+            print('!!ALERT!! NUM: 2')
+            print('path:', path)
+            print('goal:', goal)
+            print('prev:', prev)"""
     return goal, path
 
 cars = []
@@ -179,7 +184,7 @@ def spawn_cars():
     gates_spawn = [0, 0, 0, 0]
 
     if cur_car_num < settings.car_num:
-        print('spawn_cars', time//200)
+        #print('spawn_cars', time//200)
 
         dif = settings.car_num - cur_car_num
         spanw_now = min(dif, 4)
@@ -193,7 +198,7 @@ def spawn_cars():
         for i in range(4):
             if gates_spawn[i] == 1:
 
-                cars.append(Vehicle(start_vert[i]))
+                cars.append(Vehicle(start_vert[i], random.randint(0, 3)))
 
 
 

@@ -14,7 +14,11 @@ class Storage:
         self.im_dict['block1'] = graphics.load_image('images/block1.png', (3, 3))
         self.im_dict['block2'] = graphics.load_image('images/block2.png', (3, 3))
         self.im_dict['block3'] = graphics.load_image('images/block3.png', (3, 3))
-        self.im_dict['car'] = graphics.load_image('images/car.png')
+
+        self.im_dict['car0'] = graphics.load_image('images/car0.png')
+        self.im_dict['car1'] = graphics.load_image('images/car1.png')
+        self.im_dict['car2'] = graphics.load_image('images/car2.png')
+        self.im_dict['car3'] = graphics.load_image('images/car3.png')
 
     def get_image(self, type):
         return self.im_dict[type]
