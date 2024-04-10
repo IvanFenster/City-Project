@@ -6,6 +6,7 @@ from city.tiles import Road
 from city.tiles import Block
 import random
 from city.vehicle import Vehicle
+from city.vehicle import Taxi
 
 # Создание лабиринта
 road_list = []
@@ -67,6 +68,19 @@ def define_col(vert):
 graph = [[] for _ in range(82)]
 usable_vert = [i for i in range(10, 72)]
 usable_vert += [1, 9, 72, 80]
+goal_for_taxi = usable_vert.copy()
+for i in [1, 9, 72, 80, 63, 45, 27, 17, 15, 13, 11, 18, 36, 34, 64, 66, 68, 70]:
+    goal_for_taxi.remove(i)
+
+
+for i in range(len(goal_for_taxi)):
+    vert = goal_for_taxi[i]
+    col = define_col(vert)
+    row = define_row(vert)
+    if row % 2 == 1:
+        if vert % 2 == 0:
+            y = 100 * (col - 1) + 50
+
 
 
 
@@ -129,15 +143,18 @@ for i in range(len(graph)):
 """
 
 
-def new_path(now):
+def new_path(now, isTaxi=False):
     queue = []
     color = [0 for _ in range(82)]
     dist = [0 for _ in range(82)]
     prev = [-2 for _ in range(82)]
     cur_vert = now
-    goal = random.choice(usable_vert)
+    if isTaxi:
+        goal = random.choice(goal_for_taxi)
+    else:
+        goal = random.choice(usable_vert)
     if goal == now:
-        return new_path(now)
+        return new_path(now, isTaxi=isTaxi)
     queue.append(cur_vert)
     color[cur_vert] = 1
 
@@ -172,7 +189,10 @@ start_vert = [0, 8, 73, 81]
 end_vert = [1, 9, 72, 80]
 
 cur_car_num = 0
-time = 0
+time_city = 0
+
+#cars.append(Taxi(0))
+
 
 
 def spawn_cars():
@@ -199,13 +219,20 @@ def spawn_cars():
                 cars.append(Vehicle(start_vert[i], random.randint(0, settings.last_car_option)))
 
 
+def check_collision(x, y):
+    for car in cars:
+        if car.check_coordinates(x, y):
+            return False
+    return True
+
+
 
 def update(delta_time):
-    global time
+    global time_city
 
-    time += 1
+    time_city += 1
 
-    if time % 200 == 1:
+    if time_city % 200 == 1:
         spawn_cars()
 
     if settings.debug == False:
@@ -226,6 +253,9 @@ def draw():
 
     for i in cars:
         i.draw()
+
+    #graphics.draw_image(storage.im_dict['lights'], 100, 249)
+    #graphics.draw_image(storage.im_dict['lights2'], 224, 247)
 
     if settings.debug:
         graphics.draw_image(graphics.rotatet_image(storage.im_dict['car'], 90), 24, 510)
