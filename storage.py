@@ -19,7 +19,7 @@ class Storage:
         self.im_dict['lights'] = graphics.load_image('images/lights.png')
         self.im_dict['lights2'] = graphics.load_image('images/lights2.png')
 
-        self.im_dict['taxi'] = graphics.load_image('images/taxi.png')
+        self.im_dict['taxi_call'] = graphics.load_image('images/taxi_call.png')
 
         for i in range(settings.last_car_option+1):
             self.im_dict[f'car{i}'] = graphics.load_image(f'images/car{i}.png')

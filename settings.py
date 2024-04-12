@@ -7,10 +7,14 @@ block_num = [4, 3]
 debug = False
 
 car_num = 40
+taxi_num = 2
+
 speed = 1
 turn_length = 4
 
-last_car_option = 6
+last_car_option = 7
+
+taxi_wait_time = 200
 
 car_length = 30
 car_width = 23

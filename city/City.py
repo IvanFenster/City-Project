@@ -69,7 +69,7 @@ graph = [[] for _ in range(82)]
 usable_vert = [i for i in range(10, 72)]
 usable_vert += [1, 9, 72, 80]
 goal_for_taxi = usable_vert.copy()
-for i in [1, 9, 72, 80, 63, 45, 27, 17, 15, 13, 11, 18, 36, 34, 64, 66, 68, 70]:
+for i in [1, 9, 72, 80, 63, 45, 27, 17, 15, 13, 11, 18, 36, 54, 64, 66, 68, 70]:
     goal_for_taxi.remove(i)
 
 
@@ -80,8 +80,6 @@ for i in range(len(goal_for_taxi)):
     if row % 2 == 1:
         if vert % 2 == 0:
             y = 100 * (col - 1) + 50
-
-
 
 
 row = -1
@@ -180,10 +178,7 @@ def new_path(now, isTaxi=False):
     return goal, path
 
 cars = []
-"""cars.append(Vehicle(0))
-cars.append(Vehicle(8))
-cars.append(Vehicle(73))
-cars.append(Vehicle(81))"""
+taxi = []
 
 start_vert = [0, 8, 73, 81]
 end_vert = [1, 9, 72, 80]
@@ -191,19 +186,18 @@ end_vert = [1, 9, 72, 80]
 cur_car_num = 0
 time_city = 0
 
+cur_taxi_num = 0
+
 #cars.append(Taxi(0))
 
 
 
 def spawn_cars():
-    global cur_car_num
-
+    global cur_car_num, cur_taxi_num
 
     gates_spawn = [0, 0, 0, 0]
 
     if cur_car_num < settings.car_num:
-        #print('spawn_cars', time//200)
-
         dif = settings.car_num - cur_car_num
         spanw_now = min(dif, 4)
         cur_car_num += spanw_now
@@ -215,22 +209,39 @@ def spawn_cars():
 
         for i in range(4):
             if gates_spawn[i] == 1:
+                if random.randint(0, 1) == 1 and cur_taxi_num < settings.taxi_num:
+                    s = Taxi(start_vert[i])
+                    cars.append(s)
+                    cur_taxi_num += 1
+                    taxi.append(s)
+                else:
+                    cars.append(Vehicle(start_vert[i], random.randint(1, settings.last_car_option)))
 
-                cars.append(Vehicle(start_vert[i], random.randint(0, settings.last_car_option)))
 
-
-def check_collision(x, y):
+def check_collision(x, y, who):
     for car in cars:
-        if car.check_coordinates(x, y):
-            return False
-    return True
+        if car.check_coordinates(x, y) != 0:
+            if car.collision == who:
+                call_helicopter()
+                if type(car) == "<class 'city.vehicle.Taxi'>":
+                    taxi.remove(car)
+                cars.remove(car)
 
 
+
+                return False
+            return car
+    return False
+
+
+def call_helicopter():
+    pass
 
 def update(delta_time):
-    global time_city
+    global time_city, cur_car_num
 
     time_city += 1
+    cur_car_num = len(cars)
 
     if time_city % 200 == 1:
         spawn_cars()
@@ -238,9 +249,6 @@ def update(delta_time):
     if settings.debug == False:
         for i in cars:
             i.update()
-
-
-
 
 
 def draw():
@@ -254,7 +262,14 @@ def draw():
     for i in cars:
         i.draw()
 
-    #graphics.draw_image(storage.im_dict['lights'], 100, 249)
+    for i in taxi:
+        if i.start_waiting == None:
+            graphics.draw_image(i.image_taxi_call, i.call_x, i.call_y)
+        else:
+            if time_city % 15 < 8:
+                graphics.draw_image(i.image_taxi_call, i.call_x, i.call_y)
+
+    #graphics.draw_image(storage.im_dict['taxi_call'], 228, 105)
     #graphics.draw_image(storage.im_dict['lights2'], 224, 247)
 
     if settings.debug:
