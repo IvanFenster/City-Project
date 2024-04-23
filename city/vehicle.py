@@ -54,7 +54,7 @@ class Vehicle:
         if self.color != 0:
             self.step()
 
-    def check_coordinates(self, x, y):
+    def is_occupied(self, x, y):
         if (x >= self.rect_start[0] - settings.car_rect_add and y >= self.rect_start[1] - settings.car_rect_add and
                 self.rect_end[0] + settings.car_rect_add >= x and self.rect_end[1] + settings.car_rect_add >= y):
             return True
@@ -113,24 +113,36 @@ class Vehicle:
         self.isTurning = False
         if self.degree == 0:
             check_x = self.x + self.length + settings.car_rect_add + settings.car_distance
+            check_x1 = self.x + self.length + settings.car_rect_add + 1
             check_y = center[1]
+            check_y1 = center[1]
         elif self.degree == 90:
             check_x = center[0]
+            check_x1 = center[0]
             check_y = self.y - settings.car_rect_add - settings.car_distance
+            check_y1 = self.y - settings.car_rect_add - 1
         elif self.degree == 180:
             check_x = self.x - settings.car_rect_add - settings.car_distance
+            check_x1 = self.x - settings.car_rect_add - 1
             check_y = center[1]
+            check_y1 = center[1]
         elif self.degree == 270:
             check_x = center[0]
+            check_x1 = center[0]
             check_y = self.y + self.length + settings.car_rect_add + settings.car_distance
+            check_y1 = self.y + self.length + settings.car_rect_add + 1
         else:
             self.isTurning = True
 
 
         if self.isTurning == False:
             car = City.check_collision(check_x, check_y, self)
+            car1 = City.check_collision(check_x1, check_y1, self)
             if car != False:
                 self.collision = car
+                return False
+            elif car1 != False:
+                self.collision = car1
                 return False
             else:
                 return True
@@ -163,6 +175,7 @@ class Vehicle:
 
             if self.navigator[0][1] <= 10 and len(self.navigator) > 1 and self.where_go != 'straight':
                 self.speed = settings.speed / 2
+
 
             elif self.navigator[0][1] > 10:
                 self.speed = settings.speed
@@ -308,3 +321,11 @@ class Taxi(Vehicle):  # В разработке
 
         self.rect_start = [self.x, self.y]
         self.rect_end = [self.x + self.length, self.y + self.width]
+
+    def draw(self):
+        super().draw()
+        if self.start_waiting == None:
+            graphics.draw_image(self.image_taxi_call, self.call_x, self.call_y)
+        else:
+            if City.time_city % 15 < 8:
+                graphics.draw_image(self.image_taxi_call, self.call_x, self.call_y)

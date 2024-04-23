@@ -13,6 +13,7 @@ speed = 1
 turn_length = 4
 
 last_car_option = 7
+last_block_option = 8
 
 taxi_wait_time = 200
 

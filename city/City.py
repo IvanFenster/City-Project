@@ -41,7 +41,7 @@ block_list = []
 for i in range(settings.tiles_num[0]):
     n_list = []
     for j in range(settings.tiles_num[1]):
-        rand_num = random.randint(0, 3)
+        rand_num = random.randint(0, settings.last_block_option)
         type_in = 'block' + str(rand_num)
         n_list.append(Block(i, j, type_in))
     block_list.append(n_list)
@@ -209,7 +209,7 @@ def spawn_cars():
 
         for i in range(4):
             if gates_spawn[i] == 1:
-                if random.randint(0, 1) == 1 and cur_taxi_num < settings.taxi_num:
+                if (random.randint(0, 1) == 1 or spanw_now != 4)and cur_taxi_num < settings.taxi_num :
                     s = Taxi(start_vert[i])
                     cars.append(s)
                     cur_taxi_num += 1
@@ -220,12 +220,14 @@ def spawn_cars():
 
 def check_collision(x, y, who):
     for car in cars:
-        if car.check_coordinates(x, y) != 0:
+        if car.is_occupied(x, y) != 0:
             if car.collision == who:
                 call_helicopter()
                 if type(car) == "<class 'city.vehicle.Taxi'>":
                     taxi.remove(car)
+                    print('taxi removed')
                 cars.remove(car)
+                print('Car Removed')
 
 
 
@@ -238,10 +240,11 @@ def call_helicopter():
     pass
 
 def update(delta_time):
-    global time_city, cur_car_num
+    global time_city, cur_car_num, cur_taxi_num
 
     time_city += 1
     cur_car_num = len(cars)
+    cur_taxi_num = len(taxi)
 
     if time_city % 200 == 1:
         spawn_cars()
@@ -252,6 +255,8 @@ def update(delta_time):
 
 
 def draw():
+    global time_city
+
     for i in road_list:
         for j in i:
             j.draw()
@@ -260,17 +265,26 @@ def draw():
             j.draw()
 
     for i in cars:
-        i.draw()
+        if type(i) != "<class 'city.vehicle.Taxi'>":
+            i.draw()
 
     for i in taxi:
+        i.draw()
+
+    """for i in taxi:
         if i.start_waiting == None:
             graphics.draw_image(i.image_taxi_call, i.call_x, i.call_y)
         else:
             if time_city % 15 < 8:
-                graphics.draw_image(i.image_taxi_call, i.call_x, i.call_y)
+                graphics.draw_image(i.image_taxi_call, i.call_x, i.call_y)"""
 
     #graphics.draw_image(storage.im_dict['taxi_call'], 228, 105)
-    #graphics.draw_image(storage.im_dict['lights2'], 224, 247)
+    if time_city % 6 <= 1:
+        graphics.draw_image(storage.im_dict['hel1'], 180, 247)
+    elif time_city % 6 <= 3:
+        graphics.draw_image(storage.im_dict['hel2'], 180, 247)
+    elif time_city % 6 <= 5:
+        graphics.draw_image(storage.im_dict['hel3'], 180, 247)
 
     if settings.debug:
         graphics.draw_image(graphics.rotatet_image(storage.im_dict['car'], 90), 24, 510)
