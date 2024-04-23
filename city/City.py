@@ -7,6 +7,7 @@ from city.tiles import Block
 import random
 from city.vehicle import Vehicle
 from city.vehicle import Taxi
+from city.helicopter import Helicopter
 
 # Создание лабиринта
 road_list = []
@@ -179,6 +180,7 @@ def new_path(now, isTaxi=False):
 
 cars = []
 taxi = []
+helicopters = []
 
 start_vert = [0, 8, 73, 81]
 end_vert = [1, 9, 72, 80]
@@ -228,9 +230,6 @@ def check_collision(x, y, who):
                     print('taxi removed')
                 cars.remove(car)
                 print('Car Removed')
-
-
-
                 return False
             return car
     return False
@@ -248,10 +247,14 @@ def update(delta_time):
 
     if time_city % 200 == 1:
         spawn_cars()
+        if len(helicopters) == 0:
+            helicopters.append(Helicopter([175, 175]))
 
-    if settings.debug == False:
-        for i in cars:
-            i.update()
+    for i in cars:
+        i.update()
+
+    for i in helicopters:
+        i.update()
 
 
 def draw():
@@ -271,6 +274,9 @@ def draw():
     for i in taxi:
         i.draw()
 
+    for i in helicopters:
+        i.draw()
+
     """for i in taxi:
         if i.start_waiting == None:
             graphics.draw_image(i.image_taxi_call, i.call_x, i.call_y)
@@ -279,12 +285,7 @@ def draw():
                 graphics.draw_image(i.image_taxi_call, i.call_x, i.call_y)"""
 
     #graphics.draw_image(storage.im_dict['taxi_call'], 228, 105)
-    if time_city % 6 <= 1:
-        graphics.draw_image(storage.im_dict['hel1'], 180, 247)
-    elif time_city % 6 <= 3:
-        graphics.draw_image(storage.im_dict['hel2'], 180, 247)
-    elif time_city % 6 <= 5:
-        graphics.draw_image(storage.im_dict['hel3'], 180, 247)
+
 
     if settings.debug:
         graphics.draw_image(graphics.rotatet_image(storage.im_dict['car'], 90), 24, 510)
