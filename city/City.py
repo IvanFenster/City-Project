@@ -190,6 +190,7 @@ time_city = 0
 
 cur_taxi_num = 0
 
+
 #cars.append(Taxi(0))
 
 
@@ -221,16 +222,22 @@ def spawn_cars():
 
 
 def check_collision(x, y, who):
+
+
     for car in cars:
         if car.is_occupied(x, y) != 0:
             if car.collision == who:
-                call_helicopter()
-                if type(car) == "<class 'city.vehicle.Taxi'>":
+                if car.heli_called == False:
+                    car.heli_called = True
+                    who.heli_called = True
+                    helicopters.append(Helicopter(car))
+
+                """if type(car) == "<class 'city.vehicle.Taxi'>":
                     taxi.remove(car)
                     print('taxi removed')
                 cars.remove(car)
-                print('Car Removed')
-                return False
+                print('Car Removed')"""
+                return car
             return car
     return False
 
@@ -247,8 +254,7 @@ def update(delta_time):
 
     if time_city % 200 == 1:
         spawn_cars()
-        if len(helicopters) == 0:
-            helicopters.append(Helicopter([175, 175]))
+
 
     for i in cars:
         i.update()

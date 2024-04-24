@@ -16,6 +16,9 @@ class Vehicle:
         self.color = color
         self.collision = None
 
+        self.is_collisioned = True
+        self.followed = None
+        self.heli_called = False
 
         if self.vertex == 0:
             self.x = 3
@@ -62,16 +65,15 @@ class Vehicle:
             return False
 
 
-    def find_center(self, x, y):
+    def find_center(self):
         if self.degree % 180 == 90:
-            center = [x + self.length / 2, y + self.width / 2]
+            center = [self.x + self.length / 2, self.y + self.width / 2]
         else:
-            center = [x + self.width / 2, y + self.length / 2]
+            center = [self.x + self.width / 2, self.y + self.length / 2]
         return center
 
 
     def step(self):
-
         if len(self.path) == 0:  # Если последняя точка маршрута
             if self.goal in City.end_vert:  # Если машина уехала из города
                 City.cars.remove(self)
@@ -109,7 +111,7 @@ class Vehicle:
 
 
     def collision_check(self, check_turn=False):
-        center = self.find_center(self.x, self.y)
+        center = self.find_center()
         self.isTurning = False
         if self.degree == 0:
             check_x = self.x + self.length + settings.car_rect_add + settings.car_distance
@@ -154,47 +156,53 @@ class Vehicle:
         self.prev_x = self.x
         self.prev_y = self.y
 
-        if len(self.navigator) > 0:
-            if self.navigator[0][1] == 0:  # Если доехали до поворота или середины дороги
-
-                self.navigator.pop(0)
-                self.isturned = False
-                if len(self.navigator) == 0:
-                    self.path.pop(0)
-                    self.vertex = self.destin
-                    self.step()
-                    return
-
-            if self.isturned == False:
-                self.start_dist = self.navigator[0][1]
-                #print('degree:', self.degree, 'x:', self.x, 'y:', self.y, 'dist:', self.start_dist)
-                self.degree += self.navigator[0][0]
-                self.degree = self.degree % 360
-                self.isturned = True
-                self.move = self.degree_to_coordinates(self.degree)
-
-            if self.navigator[0][1] <= 10 and len(self.navigator) > 1 and self.where_go != 'straight':
-                self.speed = settings.speed / 2
+        if self.followed != None:
+            self.x = self.followed.x
+            self.y = self.followed.y
+        else:
 
 
-            elif self.navigator[0][1] > 10:
-                self.speed = settings.speed
+            if len(self.navigator) > 0:
+                if self.navigator[0][1] == 0:  # Если доехали до поворота или середины дороги
 
-            if self.navigator[0][1] >= self.speed:
-                new_x = self.x + self.move[0] * self.speed
-                new_y = self.y + self.move[1] * self.speed
-                if self.collision_check():
-                    self.x = new_x
-                    self.y = new_y
-                    self.navigator[0][1] -= self.speed
-            elif self.navigator[0][1] >= 0:
-                dif = self.navigator[0][1] - self.speed
-                new_x = self.x + self.move[0] * dif
-                new_y = self.y + self.move[1] * dif
-                if self.collision_check(check_turn=True):
-                    self.x = new_x
-                    self.y = new_y
-                    self.navigator[0][1] = 0
+                    self.navigator.pop(0)
+                    self.isturned = False
+                    if len(self.navigator) == 0:
+                        self.path.pop(0)
+                        self.vertex = self.destin
+                        self.step()
+                        return
+
+                if self.isturned == False:
+                    self.start_dist = self.navigator[0][1]
+                    #print('degree:', self.degree, 'x:', self.x, 'y:', self.y, 'dist:', self.start_dist)
+                    self.degree += self.navigator[0][0]
+                    self.degree = self.degree % 360
+                    self.isturned = True
+                    self.move = self.degree_to_coordinates(self.degree)
+
+                if self.navigator[0][1] <= 10 and len(self.navigator) > 1 and self.where_go != 'straight':
+                    self.speed = settings.speed / 2
+
+
+                elif self.navigator[0][1] > 10:
+                    self.speed = settings.speed
+
+                if self.navigator[0][1] >= self.speed:
+                    new_x = self.x + self.move[0] * self.speed
+                    new_y = self.y + self.move[1] * self.speed
+                    if self.collision_check():
+                        self.x = new_x
+                        self.y = new_y
+                        self.navigator[0][1] -= self.speed
+                elif self.navigator[0][1] >= 0:
+                    dif = self.navigator[0][1] - self.speed
+                    new_x = self.x + self.move[0] * dif
+                    new_y = self.y + self.move[1] * dif
+                    if self.collision_check(check_turn=True):
+                        self.x = new_x
+                        self.y = new_y
+                        self.navigator[0][1] = 0
 
         self.rect_start = [self.x, self.y]
         self.rect_end = [self.x + self.length, self.y + self.width]
@@ -238,6 +246,7 @@ class Taxi(Vehicle):  # В разработке
 
 
     def step(self):
+
         if len(self.path) == 0:
 
             if self.start_waiting == None:
@@ -271,53 +280,58 @@ class Taxi(Vehicle):  # В разработке
         self.prev_x = self.x
         self.prev_y = self.y
 
-        if self.start_waiting != None:
-            if City.time_city - self.start_waiting >= settings.taxi_wait_time:
-                self.start_waiting = None
-                self.goal, self.path = City.new_path(self.vertex, isTaxi=True)
-                self.call_x, self.call_y = self.vertex_to_taxi_coor(self.goal)
-                self.step()
+        if self.followed != None:
+            self.x = self.followed.x
+            self.y = self.followed.y
+        else:
 
-        if len(self.navigator) > 0 and self.start_waiting == None:
-            if self.navigator[0][1] == 0:  # Если доехали до поворота или середины дороги
-
-                self.navigator.pop(0)
-                self.isturned = False
-                if len(self.navigator) == 0:
-                    self.path.pop(0)
-                    self.vertex = self.destin
+            if self.start_waiting != None:
+                if City.time_city - self.start_waiting >= settings.taxi_wait_time:
+                    self.start_waiting = None
+                    self.goal, self.path = City.new_path(self.vertex, isTaxi=True)
+                    self.call_x, self.call_y = self.vertex_to_taxi_coor(self.goal)
                     self.step()
-                    return
 
-            if self.isturned == False:
-                self.start_dist = self.navigator[0][1]
-                # print('degree:', self.degree, 'x:', self.x, 'y:', self.y, 'dist:', self.start_dist)
-                self.degree += self.navigator[0][0]
-                self.degree = self.degree % 360
-                self.isturned = True
-                self.move = self.degree_to_coordinates(self.degree)
+            if len(self.navigator) > 0 and self.start_waiting == None:
+                if self.navigator[0][1] == 0:  # Если доехали до поворота или середины дороги
 
-            if self.navigator[0][1] <= 10 and len(self.navigator) > 1 and self.where_go != 'straight':
-                self.speed = settings.speed / 2
+                    self.navigator.pop(0)
+                    self.isturned = False
+                    if len(self.navigator) == 0:
+                        self.path.pop(0)
+                        self.vertex = self.destin
+                        self.step()
+                        return
 
-            elif self.navigator[0][1] > 10:
-                self.speed = settings.speed
+                if self.isturned == False:
+                    self.start_dist = self.navigator[0][1]
+                    # print('degree:', self.degree, 'x:', self.x, 'y:', self.y, 'dist:', self.start_dist)
+                    self.degree += self.navigator[0][0]
+                    self.degree = self.degree % 360
+                    self.isturned = True
+                    self.move = self.degree_to_coordinates(self.degree)
 
-            if self.navigator[0][1] >= self.speed:
-                new_x = self.x + self.move[0] * self.speed
-                new_y = self.y + self.move[1] * self.speed
-                if self.collision_check():
-                    self.x = new_x
-                    self.y = new_y
-                    self.navigator[0][1] -= self.speed
-            elif self.navigator[0][1] >= 0:
-                dif = self.navigator[0][1] - self.speed
-                new_x = self.x + self.move[0] * dif
-                new_y = self.y + self.move[1] * dif
-                if self.collision_check(check_turn=True):
-                    self.x = new_x
-                    self.y = new_y
-                    self.navigator[0][1] = 0
+                if self.navigator[0][1] <= 10 and len(self.navigator) > 1 and self.where_go != 'straight':
+                    self.speed = settings.speed / 2
+
+                elif self.navigator[0][1] > 10:
+                    self.speed = settings.speed
+
+                if self.navigator[0][1] >= self.speed:
+                    new_x = self.x + self.move[0] * self.speed
+                    new_y = self.y + self.move[1] * self.speed
+                    if self.collision_check():
+                        self.x = new_x
+                        self.y = new_y
+                        self.navigator[0][1] -= self.speed
+                elif self.navigator[0][1] >= 0:
+                    dif = self.navigator[0][1] - self.speed
+                    new_x = self.x + self.move[0] * dif
+                    new_y = self.y + self.move[1] * dif
+                    if self.collision_check(check_turn=True):
+                        self.x = new_x
+                        self.y = new_y
+                        self.navigator[0][1] = 0
 
         self.rect_start = [self.x, self.y]
         self.rect_end = [self.x + self.length, self.y + self.width]
