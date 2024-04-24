@@ -16,6 +16,14 @@ class Vehicle:
         self.color = color
         self.collision = None
 
+        self.isTaxi = False
+
+        rand = random.randint(1, 100)
+        if rand <= settings.accid_prob * 100:
+            self.accid_avail = True
+        else:
+            self.accid_avail = False
+
         self.is_collisioned = True
         self.followed = None
         self.heli_called = False
@@ -222,7 +230,7 @@ class Taxi(Vehicle):  # В разработке
         self.goal, self.path = City.new_path(self.vertex, isTaxi=True)
         self.call_x, self.call_y = self.vertex_to_taxi_coor(self.goal)
 
-
+        self.isTaxi = True
 
         self.step()
 

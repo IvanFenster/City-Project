@@ -17,6 +17,7 @@ speed = 1
 turn_length = 4
 car_distance = 6
 car_rect_add = 3
+accid_prob = 0.5
 
 # Options
 last_car_option = 7

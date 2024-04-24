@@ -20,7 +20,7 @@ class Helicopter():
         self.call = car.find_center()
         self.degree = 0
         self.car = car
-        print(type(self.car))
+
 
         self.place_heli()
 
@@ -75,8 +75,8 @@ class Helicopter():
             self.x += self.direction[0] * self.speed
             self.y += self.direction[1] * self.speed
 
-        if City.time_city % 40 == 0:
-             print(self.x, self.y)
+            """if City.time_city % 40 == 0:
+             print(self.x, self.y)"""
 
         # Достиг цели
         if self.stage == 0 and self.check_reaching():
@@ -98,6 +98,8 @@ class Helicopter():
             if self.x > set.screen_size[0] + 100 or self.x < -100 or self.y < -100 or self.y > set.screen_size[1] + 100:
                 City.cars.remove(self.car)
                 City.helicopters.remove(self)
+                if self.car.isTaxi:
+                    City.taxi.remove(self.car)
 
 
 

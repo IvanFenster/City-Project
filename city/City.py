@@ -221,23 +221,36 @@ def spawn_cars():
                     cars.append(Vehicle(start_vert[i], random.randint(1, settings.last_car_option)))
 
 
+def recursive_check(car, who):
+    if car.collision == who:
+        return True
+    if car.collision != None:
+        if car.collision.collision == who:
+            return True
+        if car.collision.collision != None:
+            if car.collision.collision.collision == who:
+                return True
+    return False
+
+
 def check_collision(x, y, who):
-
-
     for car in cars:
         if car.is_occupied(x, y) != 0:
-            if car.collision == who:
-                if car.heli_called == False:
-                    car.heli_called = True
-                    who.heli_called = True
-                    helicopters.append(Helicopter(car))
+            if recursive_check(car, who):
+                # Затор
+                if (car.prev_x == car.x and car.prev_y == car.y) and (who.prev_x == who.x and who.prev_y == who.y):
+                    if car.heli_called == False and car.accid_avail and who.accid_avail:
+                        car.heli_called = True
+                        who.heli_called = True
+                        helicopters.append(Helicopter(car))
+                        print('Accident!')
+                        print("x: ", car.x, "y:", car.y)
 
-                """if type(car) == "<class 'city.vehicle.Taxi'>":
-                    taxi.remove(car)
-                    print('taxi removed')
-                cars.remove(car)
-                print('Car Removed')"""
-                return car
+
+                    if car.accid_avail:
+                        return car
+                    else:
+                        return False
             return car
     return False
 
