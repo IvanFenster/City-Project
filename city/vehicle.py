@@ -1,20 +1,16 @@
-import city.City
 import settings
 from city import City
 import random
 from ui import graphics
 from storage import storage
 import time
-import constants
 
 
 class Vehicle:
     def __init__(self, start, color):
-
         self.vertex = start
         self.start = start
         self.color = color
-        self.collision = None
 
         self.isTaxi = False
 
@@ -24,7 +20,11 @@ class Vehicle:
         else:
             self.accid_avail = False
 
+        # Коллизии
+        self.collision = None
         self.is_collisioned = True
+
+        # Вертолет
         self.followed = None
         self.heli_called = False
 
@@ -53,7 +53,7 @@ class Vehicle:
 
         self.goal, self.path = City.new_path(self.vertex)
         self.path_index = 0
-        self.image = storage.get_image('car'+str(self.color))
+        self.image = storage.get_image('car' + str(self.color))
 
         self.navigator = []
         self.isturned = False
@@ -65,6 +65,7 @@ class Vehicle:
         if self.color != 0:
             self.step()
 
+    # Проверка занимает ли машина точку в городе
     def is_occupied(self, x, y):
         if (x >= self.rect_start[0] - settings.car_rect_add and y >= self.rect_start[1] - settings.car_rect_add and
                 self.rect_end[0] + settings.car_rect_add >= x and self.rect_end[1] + settings.car_rect_add >= y):
@@ -72,7 +73,7 @@ class Vehicle:
         else:
             return False
 
-
+    # Находим центр машины
     def find_center(self):
         if self.degree % 180 == 90:
             center = [self.x + self.length / 2, self.y + self.width / 2]
@@ -80,7 +81,7 @@ class Vehicle:
             center = [self.x + self.width / 2, self.y + self.length / 2]
         return center
 
-
+    # Вызывается если достигаем вершину графа, задает путь до следующей вершины
     def step(self):
         if len(self.path) == 0:  # Если последняя точка маршрута
             if self.goal in City.end_vert:  # Если машина уехала из города
@@ -97,27 +98,34 @@ class Vehicle:
                 self.navigator = [[0, 90], [0, 110]]
                 self.where_go = 'straight'
             elif abs(diff) == 10:
-                self.navigator = [[0, 93-settings.turn_length], [-45, settings.turn_length], [-45, 86-settings.turn_length]]
+                self.navigator = [[0, 93 - settings.turn_length], [-45, settings.turn_length],
+                                  [-45, 86 - settings.turn_length]]
                 self.where_go = 'right'
             elif abs(diff) == 7:
-                self.navigator = [[0, 114-settings.turn_length], [45, settings.turn_length], [45, 107-settings.turn_length]]
+                self.navigator = [[0, 114 - settings.turn_length], [45, settings.turn_length],
+                                  [45, 107 - settings.turn_length]]
                 self.where_go = 'left'
         if row % 2 == 0:
             if abs(diff) == 18:
                 self.navigator = [[0, 90], [0, 110]]
                 self.where_go = 'straight'
             elif abs(diff) == 9:
-                self.navigator = [[0, 93-settings.turn_length], [-45, settings.turn_length], [-45, 86-settings.turn_length]]
+                self.navigator = [[0, 93 - settings.turn_length], [-45, settings.turn_length],
+                                  [-45, 86 - settings.turn_length]]
                 self.where_go = 'right'
             elif abs(diff) == 10:
-                self.navigator = [[0, 114-settings.turn_length], [45, settings.turn_length], [45, 107-settings.turn_length]]
+                self.navigator = [[0, 114 - settings.turn_length], [45, settings.turn_length],
+                                  [45, 107 - settings.turn_length]]
                 self.where_go = 'left'
 
+    # Функция Адаптер перевод градуса поворота машины в изменение координат при движении
     def degree_to_coordinates(self, degree):
         t = degree % 360
-        return constants.degree_to_coor_move[t]
+        dictionary = {0: [1, 0], 90: [0, -1], 180: [-1, 0], 270: [0, 1], 45: [1, -1], 135: [-1, -1], 225: [-1, 1],
+                      315: [1, 1]}
+        return dictionary[t]
 
-
+    # Проверяем можно ли машине ехать вперед
     def collision_check(self, check_turn=False):
         center = self.find_center()
         self.isTurning = False
@@ -144,7 +152,6 @@ class Vehicle:
         else:
             self.isTurning = True
 
-
         if self.isTurning == False:
             car = City.check_collision(check_x, check_y, self)
             car1 = City.check_collision(check_x1, check_y1, self)
@@ -159,17 +166,15 @@ class Vehicle:
         else:
             return True
 
-
+    # Функция апдейта машины
     def update(self):
         self.prev_x = self.x
         self.prev_y = self.y
 
         if self.followed != None:
-            self.x = self.followed.x
-            self.y = self.followed.y
+            self.x = self.followed.x - 20
+            self.y = self.followed.y - 20
         else:
-
-
             if len(self.navigator) > 0:
                 if self.navigator[0][1] == 0:  # Если доехали до поворота или середины дороги
 
@@ -183,7 +188,7 @@ class Vehicle:
 
                 if self.isturned == False:
                     self.start_dist = self.navigator[0][1]
-                    #print('degree:', self.degree, 'x:', self.x, 'y:', self.y, 'dist:', self.start_dist)
+                    # print('degree:', self.degree, 'x:', self.x, 'y:', self.y, 'dist:', self.start_dist)
                     self.degree += self.navigator[0][0]
                     self.degree = self.degree % 360
                     self.isturned = True
@@ -215,13 +220,13 @@ class Vehicle:
         self.rect_start = [self.x, self.y]
         self.rect_end = [self.x + self.length, self.y + self.width]
 
-
-
+    # Функция прорисовки машины
     def draw(self):
         graphics.draw_image(graphics.rotatet_image(self.image, self.degree), self.x, self.y)
 
 
-class Taxi(Vehicle):  # В разработке
+# Класс для такси, наследуется от Vehicle
+class Taxi(Vehicle):
     def __init__(self, start):
         super().__init__(start, 0)
         self.start_waiting = None
@@ -234,7 +239,7 @@ class Taxi(Vehicle):  # В разработке
 
         self.step()
 
-
+    # Функция Адаптер вершины графа в координаты, в которое должно приехать такси
     def vertex_to_taxi_coor(self, vertex):
         row = City.define_row(vertex)
         col = City.define_col(vertex)
@@ -252,7 +257,7 @@ class Taxi(Vehicle):  # В разработке
             y = ((row // 2) - 1) * 200 + 100
         return x, y
 
-
+    # Вызывается если достигаем вершину графа, задает путь до следующей вершины
     def step(self):
 
         if len(self.path) == 0:
@@ -273,24 +278,29 @@ class Taxi(Vehicle):  # В разработке
                 if abs(diff) == 2:
                     self.navigator = [[0, 50 * 4]]
                 elif abs(diff) == 10:
-                    self.navigator = [[0, 93-settings.turn_length], [-45, settings.turn_length], [-45, 86-settings.turn_length]]
+                    self.navigator = [[0, 93 - settings.turn_length], [-45, settings.turn_length],
+                                      [-45, 86 - settings.turn_length]]
                 elif abs(diff) == 7:
-                    self.navigator = [[0, 114-settings.turn_length], [45, settings.turn_length], [45, 107-settings.turn_length]]
+                    self.navigator = [[0, 114 - settings.turn_length], [45, settings.turn_length],
+                                      [45, 107 - settings.turn_length]]
             if row % 2 == 0:
                 if abs(diff) == 18:
                     self.navigator = [[0, 50 * 4]]
                 elif abs(diff) == 9:
-                    self.navigator = [[0, 93-settings.turn_length], [-45, settings.turn_length], [-45, 86-settings.turn_length]]
+                    self.navigator = [[0, 93 - settings.turn_length], [-45, settings.turn_length],
+                                      [-45, 86 - settings.turn_length]]
                 elif abs(diff) == 10:
-                    self.navigator = [[0, 114-settings.turn_length], [45, settings.turn_length], [45, 107-settings.turn_length]]
+                    self.navigator = [[0, 114 - settings.turn_length], [45, settings.turn_length],
+                                      [45, 107 - settings.turn_length]]
 
+    # Функция апдейта
     def update(self):
         self.prev_x = self.x
         self.prev_y = self.y
 
         if self.followed != None:
-            self.x = self.followed.x
-            self.y = self.followed.y
+            self.x = self.followed.x - 20
+            self.y = self.followed.y - 20
         else:
 
             if self.start_waiting != None:
@@ -344,6 +354,7 @@ class Taxi(Vehicle):  # В разработке
         self.rect_start = [self.x, self.y]
         self.rect_end = [self.x + self.length, self.y + self.width]
 
+    # Функция отрисовка
     def draw(self):
         super().draw()
         if self.start_waiting == None:

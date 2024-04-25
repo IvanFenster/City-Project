@@ -8,12 +8,12 @@ running = True
 clock = events.Clock()
 
 # Приветствие. Его нужно удалить
-#greetings()
+# greetings()
 
 while running:
     for event in events.get_event_queue():
         if event.type == events.QUIT:
-           running = False
+            running = False
         if event.type == events.MOUSEBUTTONDOWN:
             pass
 

@@ -2,6 +2,8 @@ from storage import storage
 import settings
 from ui import graphics
 
+# Классы отвечающие за дороги и кварталы
+
 class Tiles:
     def __init__(self, xn, yn, type):
         self.xn = xn
@@ -13,6 +15,7 @@ class Tiles:
 
     def draw(self):
         graphics.draw_image(self.image, self.x, self.y)
+
 
 class Road(Tiles):
    def __init__(self, xn, yn, type):

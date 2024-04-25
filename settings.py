@@ -5,10 +5,8 @@ view_left_top = [0, 0]
 tiles_num = [17, 13]
 block_num = [4, 3]
 
-debug = False
-
 # Car
-car_num = 40
+car_num = 30
 car_length = 30
 car_width = 23
 
@@ -17,7 +15,7 @@ speed = 1
 turn_length = 4
 car_distance = 6
 car_rect_add = 3
-accid_prob = 0.5
+accid_prob = 1
 
 # Options
 last_car_option = 7
