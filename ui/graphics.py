@@ -35,5 +35,5 @@ def draw_circle(color, x, y, r):
 
     pass
 
-def rotatet_image(image, degree):
+def rotate_image(image, degree):
     return pygame.transform.rotate(image, degree)

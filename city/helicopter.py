@@ -98,22 +98,17 @@ class Helicopter():
                 if self.car.isTaxi:
                     City.taxi.remove(self.car)
 
-    # Функция забирает машину вместе с вертолетом
-    def get_car(self):
-        self.car.followed = self
-        self.car.is_collisioned = False
-
     # Функция прорисовки
     def draw(self):
         if City.time_city % 6 <= 1:
-            graphics.draw_image(graphics.rotatet_image(storage.im_dict['hel1'], self.degree),
+            graphics.draw_image(graphics.rotate_image(storage.im_dict['hel1'], self.degree),
                                 self.x - self.length * 3 / 4,
                                 self.y - self.width * 3 / 4)
         elif City.time_city % 6 <= 3:
-            graphics.draw_image(graphics.rotatet_image(storage.im_dict['hel2'], self.degree),
+            graphics.draw_image(graphics.rotate_image(storage.im_dict['hel2'], self.degree),
                                 self.x - self.length * 3 / 4,
                                 self.y - self.width * 3 / 4)
         elif City.time_city % 6 <= 5:
-            graphics.draw_image(graphics.rotatet_image(storage.im_dict['hel3'], self.degree),
+            graphics.draw_image(graphics.rotate_image(storage.im_dict['hel3'], self.degree),
                                 self.x - self.length * 3 / 4,
                                 self.y - self.width * 3 / 4)

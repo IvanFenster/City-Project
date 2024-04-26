@@ -46,7 +46,7 @@ for i in range(settings.tiles_num[0]):
     block_list.append(n_list)
 
 
-# Функция определяет ряд по номеру вершины графа
+# Функция определяет ряд по номеру вершины граф
 def define_row(vert):
     k = vert % 18
     t = vert // 18

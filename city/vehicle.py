@@ -222,7 +222,7 @@ class Vehicle:
 
     # Функция прорисовки машины
     def draw(self):
-        graphics.draw_image(graphics.rotatet_image(self.image, self.degree), self.x, self.y)
+        graphics.draw_image(graphics.rotate_image(self.image, self.degree), self.x, self.y)
 
 
 # Класс для такси, наследуется от Vehicle
@@ -239,7 +239,7 @@ class Taxi(Vehicle):
 
         self.step()
 
-    # Функция Адаптер вершины графа в координаты, в которое должно приехать такси
+    # Функция Адаптер: вершины графа в координаты, в которое должно приехать такси
     def vertex_to_taxi_coor(self, vertex):
         row = City.define_row(vertex)
         col = City.define_col(vertex)
