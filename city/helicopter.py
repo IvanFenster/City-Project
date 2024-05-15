@@ -22,6 +22,8 @@ class Helicopter():
         self.degree = 0
         self.car = car
 
+        self.skip = False
+
         self.place_heli()
 
         self.stage = 0
@@ -69,14 +71,20 @@ class Helicopter():
 
     # Функция update
     def update(self):
+        if self.car.check_movement():
+            self.skip = True
+
         if not self.stage == 1:
             self.x += self.direction[0] * self.speed
             self.y += self.direction[1] * self.speed
 
         # Достиг цели
         if self.stage == 0 and self.check_reaching():
-            self.stage = 1
-            self.stop_time = City.time_city
+            if self.skip:
+                self.stage = 2
+            else:
+                self.stage = 1
+                self.stop_time = City.time_city
 
         if self.stage == 1:
             # Начинает улетать

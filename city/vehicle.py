@@ -73,6 +73,13 @@ class Vehicle:
         else:
             return False
 
+
+    def check_movement(self):
+        if self.prev_x == self.x and self.prev_y == self.y:
+            return False
+        else:
+            return True
+
     # Находим центр машины
     def find_center(self):
         if self.degree % 180 == 90:
